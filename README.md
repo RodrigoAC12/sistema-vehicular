@@ -50,6 +50,8 @@ Servicios incluidos:
 - Inicio de sesión por roles.
 - Registro de solicitudes vehiculares.
 - Validación de fecha mínima desde el día siguiente.
+- Pedidos especiales para el mismo día sujetos a disponibilidad real.
+- Evaluación de asientos y vehículo disponible antes de atender o rechazar un pedido especial.
 - Validación de horario permitido de 08:00 a 16:00.
 - Gestión de vehículos y conductores.
 - Cola vehicular con criterio FIFO.
@@ -86,6 +88,12 @@ http://localhost/phpmyadmin
 
 ```text
 database/db_sistema_vehicular.sql
+```
+
+Si ya tenía una base importada antes de los pedidos especiales, aplique:
+
+```text
+database/migrations/2026_06_17_pedidos_especiales.sql
 ```
 
 6. Verifique la conexión en:
@@ -131,21 +139,22 @@ admin123
 
 1. Iniciar sesión como solicitante.
 2. Registrar una solicitud vehicular para mañana o una fecha posterior.
-3. Iniciar sesión como coordinador.
-4. Revisar solicitudes pendientes.
-5. Usar la opción **Sugerir vehículo** o asignar uno manualmente.
-6. Asignar conductor y guardar la programación.
-7. Iniciar sesión como conductor.
-8. Registrar kilometraje inicial.
-9. Iniciar ruta.
-10. Registrar kilometraje final.
-11. Registrar retorno.
-12. Revisar dashboard, cola y estadísticas actualizadas.
+3. Si es urgente, registrar un **Pedido especial** para hoy; el sistema evaluará vehículo y asientos disponibles.
+4. Iniciar sesión como coordinador.
+5. Revisar solicitudes pendientes y pedidos especiales atendibles.
+6. Usar la opción **Sugerir vehículo** o asignar uno manualmente.
+7. Asignar conductor y guardar la programación.
+8. Iniciar sesión como conductor.
+9. Registrar kilometraje inicial.
+10. Iniciar ruta.
+11. Registrar kilometraje final.
+12. Registrar retorno.
+13. Revisar dashboard, cola y estadísticas actualizadas.
 
 ## Módulos del sistema
 
 - **Dashboard:** indicadores generales, alertas inteligentes y gráficos.
-- **Solicitudes:** registro guiado y listado de solicitudes.
+- **Solicitudes:** registro guiado, pedidos normales y pedidos especiales con evaluación de disponibilidad.
 - **Vehículos:** administración de flota, estados, capacidad y kilometraje.
 - **Conductores:** registro y estado de conductores.
 - **Programación:** asignación de vehículos y conductores.
@@ -165,6 +174,7 @@ sistema-vehicular/
     routes.php
   database/
     db_sistema_vehicular.sql
+    migrations/
   docs/
     arquitectura.md
     endpoints.md

@@ -60,6 +60,8 @@ function renderMetrics(data) {
     ['Solicitudes de hoy', data.solicitudes_hoy, 'bi-calendar-day', 'bg-primary-app', 'Servicios solicitados para hoy'],
     ['Pendientes', data.solicitudes_pendientes, 'bi-hourglass-split', 'bg-warning-app', 'Requieren programación'],
     ['Programadas', data.solicitudes_programadas, 'bi-calendar-check', 'bg-info-app', 'Listas para atención'],
+    ['Especiales', data.pedidos_especiales_atender, 'bi-lightning-charge', 'bg-primary-app', 'Atendibles por disponibilidad'],
+    ['Esp. rechazados', data.pedidos_especiales_rechazados, 'bi-x-circle', 'bg-danger-app', 'Sin vehículo o asientos'],
     ['Disponibles', data.vehiculos_disponibles, 'bi-check-circle', 'bg-success-app', 'Unidades operativas'],
     ['En ruta', data.vehiculos_en_ruta, 'bi-geo-alt', 'bg-info-app', 'Atenciones activas'],
     ['Mantenimiento', data.vehiculos_mantenimiento, 'bi-tools', 'bg-muted-app', 'No asignables'],

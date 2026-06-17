@@ -85,11 +85,16 @@ CREATE TABLE solicitudes (
   cantidad_personas INT NOT NULL,
   motivo VARCHAR(255) NOT NULL,
   observaciones TEXT NULL,
+  tipo_solicitud ENUM('normal','especial') NOT NULL DEFAULT 'normal',
+  resultado_especial ENUM('no_aplica','atender','rechazar') NOT NULL DEFAULT 'no_aplica',
+  motivo_rechazo VARCHAR(255) NULL,
+  id_vehiculo_sugerido INT NULL,
   estado ENUM('pendiente','programada','atendida','rechazada','cancelada') NOT NULL DEFAULT 'pendiente',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_solicitudes_usuarios FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
-  CONSTRAINT fk_solicitudes_areas FOREIGN KEY (id_area) REFERENCES areas(id_area)
+  CONSTRAINT fk_solicitudes_areas FOREIGN KEY (id_area) REFERENCES areas(id_area),
+  CONSTRAINT fk_solicitudes_vehiculo_sugerido FOREIGN KEY (id_vehiculo_sugerido) REFERENCES vehiculos(id_vehiculo)
 ) ENGINE=InnoDB;
 
 CREATE TABLE programaciones (
@@ -218,15 +223,17 @@ INSERT INTO cola_vehicular (id_vehiculo, `orden`, estado) VALUES
 (4, 7, 'retirado'),
 (8, 8, 'retirado');
 
-INSERT INTO solicitudes (id_usuario, id_area, fecha_solicitud, fecha_servicio, hora_servicio, direccion, cantidad_personas, motivo, observaciones, estado) VALUES
-(6, 2, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:00:00', 'Av. Salaverry 655, Jesús María', 3, 'Entrega de expedientes laborales', 'Documentación para mesa de partes', 'pendiente'),
-(8, 6, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 DAY), '11:30:00', 'SUNAT - Av. Garcilaso de la Vega 1472, Lima', 4, 'Presentación de documentación tributaria', 'Debe retornar con cargo firmado', 'pendiente'),
-(3, 4, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 DAY), '08:30:00', 'Gobierno Regional - Av. Arequipa 810, Lima', 5, 'Reunión de coordinación tecnológica', 'Equipo de TI con material de presentación', 'programada'),
-(7, 3, CURDATE(), CURDATE(), '10:00:00', 'Almacén central - Av. Argentina 3020, Callao', 2, 'Supervisión de recepción de suministros', 'Ruta activa durante la mañana', 'programada'),
-(3, 4, DATE_SUB(CURDATE(), INTERVAL 1 DAY), DATE_SUB(CURDATE(), INTERVAL 1 DAY), '09:15:00', 'Centro de datos externo - San Isidro', 2, 'Verificación de conectividad institucional', 'Atención cerrada sin incidencias', 'atendida'),
-(9, 5, DATE_SUB(CURDATE(), INTERVAL 2 DAY), DATE_SUB(CURDATE(), INTERVAL 2 DAY), '15:30:00', 'Notaría Fernández - Jr. Lampa 879, Lima', 3, 'Legalización de documentos administrativos', 'Se entregaron documentos originales', 'atendida'),
-(6, 2, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 DAY), '14:00:00', 'Centro de convenciones de Lima', 12, 'Traslado a capacitación externa', 'Solicitud rechazada por falta de unidad de alta capacidad en ese horario', 'rechazada'),
-(8, 6, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 2 DAY), '16:00:00', 'Banco de la Nación - agencia San Borja', 2, 'Depósito de garantías institucionales', 'Cancelada por el área solicitante', 'cancelada');
+INSERT INTO solicitudes (id_usuario, id_area, fecha_solicitud, fecha_servicio, hora_servicio, direccion, cantidad_personas, motivo, observaciones, tipo_solicitud, resultado_especial, motivo_rechazo, id_vehiculo_sugerido, estado) VALUES
+(6, 2, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:00:00', 'Av. Salaverry 655, Jesús María', 3, 'Entrega de expedientes laborales', 'Documentación para mesa de partes', 'normal', 'no_aplica', NULL, NULL, 'pendiente'),
+(8, 6, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 DAY), '11:30:00', 'SUNAT - Av. Garcilaso de la Vega 1472, Lima', 4, 'Presentación de documentación tributaria', 'Debe retornar con cargo firmado', 'normal', 'no_aplica', NULL, NULL, 'pendiente'),
+(3, 4, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 DAY), '08:30:00', 'Gobierno Regional - Av. Arequipa 810, Lima', 5, 'Reunión de coordinación tecnológica', 'Equipo de TI con material de presentación', 'normal', 'no_aplica', NULL, NULL, 'programada'),
+(7, 3, CURDATE(), CURDATE(), '10:00:00', 'Almacén central - Av. Argentina 3020, Callao', 2, 'Supervisión de recepción de suministros', 'Ruta activa durante la mañana', 'normal', 'no_aplica', NULL, NULL, 'programada'),
+(3, 4, DATE_SUB(CURDATE(), INTERVAL 1 DAY), DATE_SUB(CURDATE(), INTERVAL 1 DAY), '09:15:00', 'Centro de datos externo - San Isidro', 2, 'Verificación de conectividad institucional', 'Atención cerrada sin incidencias', 'normal', 'no_aplica', NULL, NULL, 'atendida'),
+(9, 5, DATE_SUB(CURDATE(), INTERVAL 2 DAY), DATE_SUB(CURDATE(), INTERVAL 2 DAY), '15:30:00', 'Notaría Fernández - Jr. Lampa 879, Lima', 3, 'Legalización de documentos administrativos', 'Se entregaron documentos originales', 'normal', 'no_aplica', NULL, NULL, 'atendida'),
+(6, 2, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 DAY), '14:00:00', 'Centro de convenciones de Lima', 12, 'Traslado a capacitación externa', 'Solicitud rechazada por falta de unidad de alta capacidad en ese horario', 'normal', 'no_aplica', NULL, NULL, 'rechazada'),
+(8, 6, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 2 DAY), '16:00:00', 'Banco de la Nación - agencia San Borja', 2, 'Depósito de garantías institucionales', 'Cancelada por el área solicitante', 'normal', 'no_aplica', NULL, NULL, 'cancelada'),
+(7, 3, CURDATE(), CURDATE(), '15:00:00', 'Hospital Nacional Arzobispo Loayza - Av. Alfonso Ugarte 848, Lima', 6, 'Recojo urgente de insumos para almacén', 'Pedido especial del mismo día validado con minibús institucional disponible', 'especial', 'atender', NULL, 7, 'pendiente'),
+(9, 5, CURDATE(), CURDATE(), '13:30:00', 'Aeropuerto Jorge Chávez - Callao', 18, 'Traslado urgente de comisión administrativa', 'Pedido especial rechazado al superar la capacidad disponible en cola', 'especial', 'rechazar', 'No hay vehículos disponibles con capacidad suficiente para atender este pedido especial.', NULL, 'rechazada');
 
 INSERT INTO programaciones (id_solicitud, id_vehiculo, id_conductor, fecha_programada, hora_programada, destino, estado, observaciones) VALUES
 (3, 2, 2, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '08:30:00', 'Gobierno Regional - Av. Arequipa 810, Lima', 'programada', 'Asignación confirmada para reunión de TI'),

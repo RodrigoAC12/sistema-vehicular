@@ -47,6 +47,7 @@ Authorization: Bearer TOKEN
 | Método | Servicio | Acción | Rol |
 | --- | --- | --- | --- |
 | POST | solicitudes | crear | administrador, coordinador, solicitante |
+| GET/POST | solicitudes | evaluar-especial | administrador, coordinador, solicitante |
 | GET | solicitudes | listar | administrador, coordinador, solicitante |
 | GET | solicitudes | pendientes | administrador, coordinador |
 | GET | solicitudes | dia | administrador, coordinador, solicitante, conductor |

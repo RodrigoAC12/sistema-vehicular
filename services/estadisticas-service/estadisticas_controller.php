@@ -42,6 +42,9 @@ function stats_summary(): void
         'solicitudes_programadas' => (int)$db->query("SELECT COUNT(*) total FROM solicitudes WHERE estado = 'programada'")->fetch()['total'],
         'solicitudes_atendidas' => (int)$db->query("SELECT COUNT(*) total FROM solicitudes WHERE estado = 'atendida'")->fetch()['total'],
         'solicitudes_rechazadas' => (int)$db->query("SELECT COUNT(*) total FROM solicitudes WHERE estado = 'rechazada'")->fetch()['total'],
+        'pedidos_especiales' => (int)$db->query("SELECT COUNT(*) total FROM solicitudes WHERE tipo_solicitud = 'especial'")->fetch()['total'],
+        'pedidos_especiales_atender' => (int)$db->query("SELECT COUNT(*) total FROM solicitudes WHERE tipo_solicitud = 'especial' AND resultado_especial = 'atender' AND estado = 'pendiente'")->fetch()['total'],
+        'pedidos_especiales_rechazados' => (int)$db->query("SELECT COUNT(*) total FROM solicitudes WHERE tipo_solicitud = 'especial' AND resultado_especial = 'rechazar'")->fetch()['total'],
         'vehiculos_disponibles' => (int)$db->query("SELECT COUNT(*) total FROM vehiculos WHERE estado = 'disponible'")->fetch()['total'],
         'vehiculos_en_ruta' => (int)$db->query("SELECT COUNT(*) total FROM vehiculos WHERE estado = 'en_ruta'")->fetch()['total'],
         'vehiculos_mantenimiento' => (int)$db->query("SELECT COUNT(*) total FROM vehiculos WHERE estado = 'mantenimiento'")->fetch()['total'],
@@ -66,6 +69,12 @@ function stats_summary(): void
     }
     if ($data['solicitudes_pendientes'] > $data['vehiculos_disponibles']) {
         $data['alertas'][] = 'No hay vehículos suficientes para solicitudes pendientes.';
+    }
+    if ($data['pedidos_especiales_atender'] > 0) {
+        $data['alertas'][] = 'Hay pedidos especiales con disponibilidad para programar hoy.';
+    }
+    if ($data['pedidos_especiales_rechazados'] > 0) {
+        $data['alertas'][] = 'Hay pedidos especiales rechazados por falta de vehículo o asientos.';
     }
 
     json_response(true, 'Resumen estadístico obtenido correctamente', $data);

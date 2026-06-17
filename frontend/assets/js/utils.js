@@ -136,7 +136,12 @@ function stateBadge(state) {
     iniciado: ['state-info', 'bi-speedometer'],
     finalizado: ['state-success', 'bi-check-circle'],
     activo: ['state-success', 'bi-check-circle'],
-    inactivo: ['state-muted', 'bi-pause-circle']
+    inactivo: ['state-muted', 'bi-pause-circle'],
+    normal: ['state-muted', 'bi-file-earmark-text'],
+    especial: ['state-primary', 'bi-lightning-charge'],
+    no_aplica: ['state-muted', 'bi-dash-circle'],
+    atender: ['state-success', 'bi-check-circle'],
+    rechazar: ['state-danger', 'bi-x-circle']
   };
   const [cls, icon] = map[state] || ['state-muted', 'bi-dot'];
   const label = String(state || '').replaceAll('_', ' ');

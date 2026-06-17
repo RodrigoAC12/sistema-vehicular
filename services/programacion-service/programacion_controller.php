@@ -31,6 +31,7 @@ function handle_programacion_request(string $action): void
 function programacion_base_sql(): string
 {
     return "SELECT p.*, s.id_area, s.id_usuario, s.cantidad_personas, s.motivo,
+                   s.tipo_solicitud, s.resultado_especial,
                    a.nombre AS area, v.placa, v.marca, v.modelo, v.capacidad,
                    c.id_usuario AS id_usuario_conductor,
                    CONCAT(uc.nombres, ' ', uc.apellidos) AS conductor

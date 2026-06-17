@@ -27,6 +27,20 @@ function valid_service_date(string $date): bool
     return $serviceDate >= $tomorrow;
 }
 
+function valid_service_date_from_today(string $date): bool
+{
+    $serviceDate = DateTime::createFromFormat('Y-m-d', $date);
+    if (!$serviceDate || $serviceDate->format('Y-m-d') !== $date) {
+        return false;
+    }
+
+    $today = new DateTime('today');
+    $today->setTime(0, 0, 0);
+    $serviceDate->setTime(0, 0, 0);
+
+    return $serviceDate >= $today;
+}
+
 function valid_service_hour(string $hour): bool
 {
     if (!preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $hour)) {
@@ -67,6 +81,24 @@ function add_vehicle_to_queue(PDO $db, int $idVehiculo): void
 
     $insert = $db->prepare("INSERT INTO cola_vehicular (id_vehiculo, `orden`, estado) VALUES (?, ?, 'en_cola')");
     $insert->execute([$idVehiculo, next_queue_order($db)]);
+}
+
+function find_available_vehicle_for_capacity(PDO $db, int $capacity): ?array
+{
+    $stmt = $db->prepare(
+        "SELECT v.*, c.id_cola, c.`orden`
+         FROM cola_vehicular c
+         INNER JOIN vehiculos v ON v.id_vehiculo = c.id_vehiculo
+         WHERE c.estado = 'en_cola'
+           AND v.estado = 'disponible'
+           AND v.capacidad >= ?
+         ORDER BY c.`orden`, v.capacidad, v.kilometraje_actual
+         LIMIT 1"
+    );
+    $stmt->execute([$capacity]);
+    $vehiculo = $stmt->fetch();
+
+    return $vehiculo ?: null;
 }
 
 function log_action(PDO $db, ?int $idUsuario, string $modulo, string $accion, string $descripcion): void

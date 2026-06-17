@@ -54,7 +54,7 @@ async function loadProgramacionCatalogs() {
     apiRequest('conductores', 'activos')
   ]);
   window.pendingRequests = pendientes.data;
-  document.getElementById('solicitudSelect').innerHTML = toOptions(pendientes.data, 'id_solicitud', (s) => `#${s.id_solicitud} - ${s.area} - ${formatDate(s.fecha_servicio)} ${formatTime(s.hora_servicio)}`, 'Seleccione solicitud');
+  document.getElementById('solicitudSelect').innerHTML = toOptions(pendientes.data, 'id_solicitud', (s) => `#${s.id_solicitud} - ${s.tipo_solicitud === 'especial' ? 'Especial - ' : ''}${s.area} - ${formatDate(s.fecha_servicio)} ${formatTime(s.hora_servicio)}`, 'Seleccione solicitud');
   document.getElementById('vehiculoSelect').innerHTML = toOptions(vehiculos.data, 'id_vehiculo', (v) => `${v.placa} - ${v.marca} ${v.modelo} (${v.capacidad} pers.)`, 'Seleccione vehículo');
   document.getElementById('conductorSelect').innerHTML = toOptions(conductores.data, 'id_conductor', (c) => `${c.conductor} - ${c.licencia}`, 'Seleccione conductor');
   renderPendientes(pendientes.data);
@@ -74,11 +74,12 @@ function renderPendientes(items) {
     <tr>
       <td>#${s.id_solicitud}</td>
       <td><strong>${s.area}</strong><div class="small text-muted">${s.motivo}</div></td>
+      <td>${stateBadge(s.tipo_solicitud || 'normal')}${s.tipo_solicitud === 'especial' ? `<div class="mt-1">${stateBadge(s.resultado_especial)}</div>` : ''}</td>
       <td>${formatDate(s.fecha_servicio)} ${formatTime(s.hora_servicio)}</td>
       <td>${s.cantidad_personas}</td>
       <td>${s.direccion}</td>
     </tr>`).join('');
-  document.getElementById('pendientesTable').innerHTML = rows ? tableWrap(`<table class="table table-hover"><thead><tr><th>ID</th><th>Area</th><th>Fecha</th><th>Pers.</th><th>Destino</th></tr></thead><tbody>${rows}</tbody></table>`) : emptyState('No hay solicitudes pendientes', 'bi-check-circle');
+  document.getElementById('pendientesTable').innerHTML = rows ? tableWrap(`<table class="table table-hover"><thead><tr><th>ID</th><th>Área</th><th>Tipo</th><th>Fecha</th><th>Pers.</th><th>Destino</th></tr></thead><tbody>${rows}</tbody></table>`) : emptyState('No hay solicitudes pendientes', 'bi-check-circle');
 }
 
 async function suggestVehicle() {

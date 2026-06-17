@@ -10,6 +10,16 @@
 - El área debe existir y estar activa.
 - Estados: `pendiente`, `programada`, `atendida`, `rechazada`, `cancelada`.
 
+## Pedidos especiales
+
+- Un pedido especial puede solicitarse para el mismo día.
+- No se aceptan pedidos especiales con fecha anterior a hoy.
+- Sigue aplicando el horario permitido de 08:00 a 16:00.
+- La atención está sujeta a disponibilidad de vehículo en cola y asientos suficientes.
+- Si existe vehículo disponible con capacidad suficiente, el resultado especial queda en `atender` y la solicitud queda `pendiente` para programación.
+- Si no existe vehículo o los asientos son insuficientes, el resultado especial queda en `rechazar`, la solicitud queda `rechazada` y se registra el motivo.
+- La programación vuelve a validar vehículo, capacidad y conductor antes de confirmar la atención.
+
 ## Programación
 
 - Solo se programan solicitudes pendientes.
