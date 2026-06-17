@@ -52,10 +52,10 @@ async function loadDashboard() {
 
     renderMetrics(resumen);
     renderSmartAlerts(resumen.alertas || []);
-    drawChart('requestsChart', 'doughnut', solicitudesPorEstado.map((x) => safeText(x.estado, 'Sin estado')), solicitudesPorEstado.map((x) => safeNumber(x.total)));
-    drawChart('vehiclesChart', 'doughnut', vehiculosPorEstado.map((x) => safeText(x.estado, 'Sin estado')), vehiculosPorEstado.map((x) => safeNumber(x.total)));
-    drawChart('areasChart', 'bar', areasData.map((x) => safeText(x.area, 'Sin área')), areasData.map((x) => safeNumber(x.total)));
-    drawChart('mileageChart', 'bar', kilometrajeData.map((x) => safeText(x.placa, 'Sin placa')), kilometrajeData.map((x) => safeNumber(x.kilometros)));
+    drawChart('requestsChart', 'doughnut', solicitudesPorEstado.map((x) => safeText(x.estado, 'Sin estado')), solicitudesPorEstado.map((x) => safeNumber(x.total)), 'Solicitudes');
+    drawChart('vehiclesChart', 'doughnut', vehiculosPorEstado.map((x) => safeText(x.estado, 'Sin estado')), vehiculosPorEstado.map((x) => safeNumber(x.total)), 'Vehículos');
+    drawChart('areasChart', 'bar', areasData.map((x) => safeText(x.area, 'Sin área')), areasData.map((x) => safeNumber(x.total)), 'Atenciones');
+    drawChart('mileageChart', 'bar', kilometrajeData.map((x) => safeText(x.placa, 'Sin placa')), kilometrajeData.map((x) => safeNumber(x.kilometros)), 'Kilómetros');
   } catch (error) {
     showAlert(error.message, 'danger');
   }
@@ -92,18 +92,27 @@ function renderSmartAlerts(alerts = []) {
   host.innerHTML = `<div class="alert alert-warning mb-0"><strong>Alertas inteligentes</strong><ul class="mb-0 mt-2">${alerts.map((x) => `<li>${safeText(x)}</li>`).join('')}</ul></div>`;
 }
 
-function drawChart(id, type, labels, data) {
-  if (dashboardCharts[id]) dashboardCharts[id].destroy();
+function drawChart(id, type, labels, data, datasetLabel = 'Total') {
+  const existing = dashboardCharts[id];
+  if (existing) {
+    existing.data.labels = labels;
+    existing.data.datasets[0].label = datasetLabel;
+    existing.data.datasets[0].data = data;
+    existing.update('none');
+    return;
+  }
+
   dashboardCharts[id] = new Chart(document.getElementById(id), {
     type,
     data: {
       labels,
-      datasets: [{ data, backgroundColor: chartColors(), borderWidth: 1 }]
+      datasets: [{ label: datasetLabel, data, backgroundColor: chartColors(), borderWidth: 1 }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { position: type === 'doughnut' ? 'bottom' : 'top' } },
+      animation: { duration: 0 },
+      plugins: { legend: { display: type === 'doughnut', position: 'bottom' } },
       scales: type === 'bar' ? { y: { beginAtZero: true, ticks: { precision: 0 } } } : {}
     }
   });
