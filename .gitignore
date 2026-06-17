@@ -1,0 +1,23 @@
+# Sistema operativo y editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs y temporales
+*.log
+*.tmp
+tmp/
+temp/
+
+# Dependencias si se agregan herramientas locales
+node_modules/
+vendor/
+
+# Variables locales
+.env
+.env.*
+
+# Copias y respaldos locales
+*.bak
+*.backup
