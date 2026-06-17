@@ -1,5 +1,5 @@
 const menuItems = [
-  ['dashboard', 'Dashboard', 'bi-speedometer2', 'dashboard.html', ['administrador', 'coordinador']],
+  ['dashboard', 'Panel de control', 'bi-speedometer2', 'dashboard.html', ['administrador', 'coordinador']],
   ['solicitudes', 'Solicitudes', 'bi-file-earmark-text', 'solicitudes.html', ['administrador', 'coordinador', 'solicitante']],
   ['vehiculos', 'Vehículos', 'bi-truck', 'vehiculos.html', ['administrador', 'coordinador']],
   ['conductores', 'Conductores', 'bi-person-badge', 'conductores.html', ['administrador', 'coordinador']],
@@ -32,14 +32,17 @@ function requireSession() {
 
 async function apiRequest(service, action, options = {}) {
   const query = new URLSearchParams({ service, action, ...(options.query || {}) });
-  const response = await fetch(`${window.APP_CONFIG.apiBase}?${query.toString()}`, {
+  const requestOptions = {
     method: options.method || 'GET',
     headers: {
       'Content-Type': 'application/json',
       ...(options.auth === false ? {} : { Authorization: `Bearer ${getToken()}` })
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined
-  });
+    }
+  };
+  if (Object.prototype.hasOwnProperty.call(options, 'body')) {
+    requestOptions.body = JSON.stringify(options.body);
+  }
+  const response = await fetch(`${window.APP_CONFIG.apiBase}?${query.toString()}`, requestOptions);
   const json = await response.json().catch(() => ({ success: false, message: 'Respuesta no válida del servidor', data: null }));
   if (response.status === 401) {
     localStorage.removeItem('sv_token');
@@ -47,7 +50,7 @@ async function apiRequest(service, action, options = {}) {
     window.location.href = 'login.html';
   }
   if (!json.success && options.throwOnError !== false) {
-    throw new Error(json.message || 'Operacion no completada');
+    throw new Error(json.message || 'Operación no completada');
   }
   return json;
 }
@@ -114,12 +117,13 @@ function showAlert(message, type = 'success') {
   if (!host) return;
   host.innerHTML = `
     <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-      ${message}
+      ${safeText(message, 'Operación completada')}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>`;
 }
 
 function stateBadge(state) {
+  const normalized = state || 'sin_estado';
   const map = {
     pendiente: ['state-warning', 'bi-hourglass-split'],
     programada: ['state-primary', 'bi-calendar-check'],
@@ -141,11 +145,40 @@ function stateBadge(state) {
     especial: ['state-primary', 'bi-lightning-charge'],
     no_aplica: ['state-muted', 'bi-dash-circle'],
     atender: ['state-success', 'bi-check-circle'],
-    rechazar: ['state-danger', 'bi-x-circle']
+    rechazar: ['state-danger', 'bi-x-circle'],
+    sin_estado: ['state-muted', 'bi-dash-circle']
   };
-  const [cls, icon] = map[state] || ['state-muted', 'bi-dot'];
-  const label = String(state || '').replaceAll('_', ' ');
+  const [cls, icon] = map[normalized] || ['state-muted', 'bi-dot'];
+  const label = stateLabel(normalized);
   return `<span class="badge-state ${cls}"><i class="bi ${icon}"></i>${label}</span>`;
+}
+
+function stateLabel(state) {
+  const labels = {
+    pendiente: 'Pendiente',
+    programada: 'Programada',
+    atendida: 'Atendida',
+    rechazada: 'Rechazada',
+    cancelada: 'Cancelada',
+    disponible: 'Disponible',
+    asignado: 'Asignado',
+    en_ruta: 'En ruta',
+    retornando: 'Retornando',
+    mantenimiento: 'Mantenimiento',
+    fuera_servicio: 'Fuera de servicio',
+    finalizada: 'Finalizada',
+    iniciado: 'Iniciado',
+    finalizado: 'Finalizado',
+    activo: 'Activo',
+    inactivo: 'Inactivo',
+    normal: 'Normal',
+    especial: 'Especial',
+    no_aplica: 'No aplica',
+    atender: 'Atender',
+    rechazar: 'Rechazar',
+    sin_estado: 'Sin estado'
+  };
+  return labels[state] || safeText(state, 'Sin estado').replaceAll('_', ' ');
 }
 
 function emptyState(message, icon = 'bi-inbox') {
@@ -170,7 +203,7 @@ function confirmAction(message) {
 }
 
 function toOptions(items, valueKey, labelFn, placeholder = 'Seleccione') {
-  return `<option value="">${placeholder}</option>` + items.map((item) => `<option value="${item[valueKey]}">${labelFn(item)}</option>`).join('');
+  return `<option value="">${placeholder}</option>` + (items || []).map((item) => `<option value="${safeText(item[valueKey], '')}">${safeText(labelFn(item))}</option>`).join('');
 }
 
 function tableWrap(content) {
@@ -179,4 +212,14 @@ function tableWrap(content) {
 
 function chartColors() {
   return ['#2563EB', '#16A34A', '#F59E0B', '#DC2626', '#0EA5E9', '#6B7280', '#9333EA', '#0891B2'];
+}
+
+function safeText(value, fallback = 'Sin dato') {
+  if (value === undefined || value === null || value === '') return fallback;
+  return String(value);
+}
+
+function safeNumber(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
 }

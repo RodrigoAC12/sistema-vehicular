@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <form id="conductorForm" class="row g-3">
               <div class="col-12"><label class="form-label">Usuario</label><select class="form-select" name="id_usuario" id="usuarioConductorSelect" required></select></div>
               <div class="col-12"><label class="form-label">Licencia</label><input class="form-control" name="licencia" required></div>
-              <div class="col-12"><label class="form-label">Telefono</label><input class="form-control" name="telefono" required></div>
+              <div class="col-12"><label class="form-label">Teléfono</label><input class="form-control" name="telefono" required></div>
               <div class="col-12"><button class="btn btn-primary btn-icon w-100"><i class="bi bi-save"></i>Guardar conductor</button></div>
             </form>
           </div>
@@ -60,7 +60,7 @@ async function loadConductores() {
           </button>
         </td>
       </tr>`).join('');
-    document.getElementById('conductoresTable').innerHTML = rows ? tableWrap(`<table class="table table-hover"><thead><tr><th>Conductor</th><th>Licencia</th><th>Telefono</th><th>Estado</th><th></th></tr></thead><tbody>${rows}</tbody></table>`) : emptyState('No hay conductores registrados');
+    document.getElementById('conductoresTable').innerHTML = rows ? tableWrap(`<table class="table table-hover"><thead><tr><th>Conductor</th><th>Licencia</th><th>Teléfono</th><th>Estado</th><th></th></tr></thead><tbody>${rows}</tbody></table>`) : emptyState('No hay conductores registrados');
   } catch (error) {
     showAlert(error.message, 'danger');
   }

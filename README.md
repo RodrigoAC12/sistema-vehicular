@@ -16,17 +16,17 @@ Sistema web para administrar solicitudes, programación, disponibilidad, kilomet
 
 ## Arquitectura
 
-El sistema no usa un backend monolítico. La comunicación se organiza así:
+El sistema no usa una capa de servidor monolítica. La comunicación se organiza así:
 
 ```text
 Usuario
-  -> Frontend Web
+  -> Interfaz web
   -> API Gateway
   -> Microservicios PHP
   -> MySQL
 ```
 
-El frontend consume el backend mediante Fetch API. El punto central de entrada es:
+La interfaz web consume la capa de servicios mediante Fetch API. El punto central de entrada es:
 
 ```text
 api-gateway/index.php?service={servicio}&action={accion}
@@ -64,7 +64,7 @@ Servicios incluidos:
 - Cálculo automático de kilómetros recorridos.
 - Registro de retornos.
 - Reingreso automático del vehículo a cola luego del retorno.
-- Dashboard con indicadores y alertas.
+- Panel de control con indicadores y alertas.
 - Estadísticas con gráficos.
 - Panel público de programación.
 - Datos iniciales realistas para pruebas y presentación.
@@ -98,6 +98,7 @@ Si ya tenía una base importada antes de los pedidos especiales, aplique:
 ```text
 database/migrations/2026_06_17_pedidos_especiales.sql
 database/migrations/2026_06_17_rutas_agrupadas.sql
+database/migrations/2026_06_17_corregir_codificacion_datos.sql
 ```
 
 6. Verifique la conexión en:
@@ -153,11 +154,11 @@ admin123
 10. Iniciar ruta.
 11. Registrar kilometraje final.
 12. Registrar retorno.
-13. Revisar dashboard, cola y estadísticas actualizadas.
+13. Revisar el panel de control, la cola y las estadísticas actualizadas.
 
 ## Módulos del sistema
 
-- **Dashboard:** indicadores generales, alertas inteligentes y gráficos.
+- **Panel de control:** indicadores generales, alertas inteligentes y gráficos.
 - **Solicitudes:** registro guiado, pedidos normales y pedidos especiales con evaluación de disponibilidad.
 - **Vehículos:** administración de flota, estados, capacidad y kilometraje.
 - **Conductores:** registro y estado de conductores.
@@ -224,7 +225,7 @@ sistema-vehicular/
 - Middleware de autenticación.
 - Control de acceso por rol.
 - PDO con consultas preparadas.
-- Validaciones en backend y frontend.
+- Validaciones en servidor e interfaz web.
 - Respuestas JSON uniformes.
 
 ## Documentación adicional

@@ -2,7 +2,7 @@
 
 ## Iniciar sesión
 
-Abra `frontend/login.html`, escriba email y password, y presione `Iniciar sesión`. El sistema guardará el token en el navegador.
+Abra `frontend/login.html`, escriba el correo electrónico y la contraseña, y presione `Iniciar sesión`. El sistema guardará el token en el navegador.
 
 ## Registrar solicitud
 

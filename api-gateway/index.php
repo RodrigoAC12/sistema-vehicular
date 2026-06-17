@@ -26,7 +26,7 @@ require_once $routes[$service];
 
 $handler = 'handle_' . str_replace('-', '_', $service) . '_request';
 if (!function_exists($handler)) {
-    json_response(false, 'El servicio no tiene un manejador valido', null, 500);
+    json_response(false, 'El servicio no tiene un manejador válido', null, 500);
 }
 
 $handler($action);

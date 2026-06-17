@@ -354,7 +354,7 @@ function programacion_suggest_vehicle(): void
         $capacidad = (int)$solicitud['cantidad_personas'];
     }
     if ($capacidad <= 0) {
-        json_response(false, 'Debe indicar una capacidad requerida valida', null, 422);
+        json_response(false, 'Debe indicar una capacidad requerida válida', null, 422);
     }
 
     $stmt = $db->prepare(

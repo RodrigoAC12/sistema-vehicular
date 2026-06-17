@@ -1,7 +1,7 @@
 let kmStarted = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-  renderShell('kilometraje', 'Kilometraje', 'Registro inicial, cierre y calculo automatico de recorrido');
+  renderShell('kilometraje', 'Kilometraje', 'Registro inicial, cierre y cálculo automático de recorrido');
   document.getElementById('page-content').innerHTML = `
     <div class="row g-3">
       <div class="col-lg-6">

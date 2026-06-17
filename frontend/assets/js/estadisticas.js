@@ -24,23 +24,23 @@ async function loadStats() {
       apiRequest('estadisticas', 'areas'),
       apiRequest('estadisticas', 'conductores')
     ]);
-    renderStatsMetrics(summary.data);
-    drawStats('statsRequests', 'pie', requests.data.por_estado.map((x) => x.estado), requests.data.por_estado.map((x) => Number(x.total)));
-    drawStats('statsVehicles', 'pie', vehicles.data.por_estado.map((x) => x.estado), vehicles.data.por_estado.map((x) => Number(x.total)));
-    drawStats('statsAreas', 'bar', areas.data.map((x) => x.area), areas.data.map((x) => Number(x.total)));
-    drawStats('statsDrivers', 'bar', drivers.data.map((x) => x.conductor), drivers.data.map((x) => Number(x.total)));
-    drawStats('statsMileage', 'bar', mileage.data.map((x) => x.placa), mileage.data.map((x) => Number(x.kilometros)));
+    renderStatsMetrics(summary.data || {});
+    drawStats('statsRequests', 'pie', (requests.data?.por_estado || []).map((x) => safeText(x.estado, 'Sin estado')), (requests.data?.por_estado || []).map((x) => safeNumber(x.total)));
+    drawStats('statsVehicles', 'pie', (vehicles.data?.por_estado || []).map((x) => safeText(x.estado, 'Sin estado')), (vehicles.data?.por_estado || []).map((x) => safeNumber(x.total)));
+    drawStats('statsAreas', 'bar', (areas.data || []).map((x) => safeText(x.area, 'Sin área')), (areas.data || []).map((x) => safeNumber(x.total)));
+    drawStats('statsDrivers', 'bar', (drivers.data || []).map((x) => safeText(x.conductor, 'Sin conductor')), (drivers.data || []).map((x) => safeNumber(x.total)));
+    drawStats('statsMileage', 'bar', (mileage.data || []).map((x) => safeText(x.placa, 'Sin placa')), (mileage.data || []).map((x) => safeNumber(x.kilometros)));
   } catch (error) {
     showAlert(error.message, 'danger');
   }
 }
 
-function renderStatsMetrics(data) {
+function renderStatsMetrics(data = {}) {
   const items = [
-    ['Total finalizadas', data.atenciones_finalizadas, 'bi-check2-square', 'bg-success-app'],
-    ['Rechazadas', data.solicitudes_rechazadas, 'bi-x-circle', 'bg-danger-app'],
-    ['Km recorridos', data.kilometros_recorridos, 'bi-speedometer2', 'bg-primary-app'],
-    ['Pendientes km final', data.pendientes_km_final, 'bi-exclamation-triangle', 'bg-warning-app']
+    ['Total finalizadas', safeNumber(data.atenciones_finalizadas), 'bi-check2-square', 'bg-success-app'],
+    ['Rechazadas', safeNumber(data.solicitudes_rechazadas), 'bi-x-circle', 'bg-danger-app'],
+    ['Km recorridos', safeNumber(data.kilometros_recorridos), 'bi-speedometer2', 'bg-primary-app'],
+    ['Pendientes km final', safeNumber(data.pendientes_km_final), 'bi-exclamation-triangle', 'bg-warning-app']
   ];
   document.getElementById('statsMetrics').innerHTML = items.map(([label, value, icon, color]) => `
     <div class="col-sm-6 col-xl-3"><div class="metric-card"><div class="metric-icon ${color}"><i class="bi ${icon}"></i></div><div><p class="metric-value">${value}</p><p class="metric-label">${label}</p></div></div></div>`).join('');

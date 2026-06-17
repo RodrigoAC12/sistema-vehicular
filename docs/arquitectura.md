@@ -4,7 +4,7 @@ El sistema usa una arquitectura basada en microservicios simulados en PHP puro. 
 
 ## Componentes
 
-- Frontend: HTML, CSS, JavaScript, Bootstrap 5, Bootstrap Icons y Chart.js.
+- Interfaz web: HTML, CSS, JavaScript, Bootstrap 5, Bootstrap Icons y Chart.js.
 - API Gateway: `api-gateway/index.php`, encargado de recibir `service` y `action`.
 - Microservicios: controladores PHP independientes por responsabilidad.
 - Base de datos: MySQL con tablas relacionales, llaves foráneas y datos iniciales.
@@ -13,7 +13,7 @@ El sistema usa una arquitectura basada en microservicios simulados en PHP puro. 
 
 ```text
 Usuario
-  -> Dashboard Web
+  -> Panel web
   -> Fetch API / JSON
   -> API Gateway
   -> Servicio PHP correspondiente

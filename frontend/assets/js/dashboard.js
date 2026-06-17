@@ -1,7 +1,7 @@
 let dashboardCharts = {};
 
 document.addEventListener('DOMContentLoaded', () => {
-  renderShell('dashboard', 'Dashboard', 'Control operativo de solicitudes, unidades y atenciones');
+  renderShell('dashboard', 'Panel de control', 'Control operativo de solicitudes, unidades y atenciones');
   document.getElementById('page-content').innerHTML = `
     <div id="smartAlerts" class="mb-3"></div>
     <div class="row g-3 mb-4" id="metricGrid"></div>
@@ -44,29 +44,35 @@ async function loadDashboard() {
       apiRequest('estadisticas', 'areas'),
       apiRequest('estadisticas', 'kilometraje')
     ]);
-    renderMetrics(summary.data);
-    renderSmartAlerts(summary.data.alertas || []);
-    drawChart('requestsChart', 'doughnut', solicitudes.data.por_estado.map((x) => x.estado), solicitudes.data.por_estado.map((x) => Number(x.total)));
-    drawChart('vehiclesChart', 'doughnut', vehiculos.data.por_estado.map((x) => x.estado), vehiculos.data.por_estado.map((x) => Number(x.total)));
-    drawChart('areasChart', 'bar', areas.data.map((x) => x.area), areas.data.map((x) => Number(x.total)));
-    drawChart('mileageChart', 'bar', kilometraje.data.map((x) => x.placa), kilometraje.data.map((x) => Number(x.kilometros)));
+    const resumen = summary.data || {};
+    const solicitudesPorEstado = solicitudes.data?.por_estado || [];
+    const vehiculosPorEstado = vehiculos.data?.por_estado || [];
+    const areasData = areas.data || [];
+    const kilometrajeData = kilometraje.data || [];
+
+    renderMetrics(resumen);
+    renderSmartAlerts(resumen.alertas || []);
+    drawChart('requestsChart', 'doughnut', solicitudesPorEstado.map((x) => safeText(x.estado, 'Sin estado')), solicitudesPorEstado.map((x) => safeNumber(x.total)));
+    drawChart('vehiclesChart', 'doughnut', vehiculosPorEstado.map((x) => safeText(x.estado, 'Sin estado')), vehiculosPorEstado.map((x) => safeNumber(x.total)));
+    drawChart('areasChart', 'bar', areasData.map((x) => safeText(x.area, 'Sin área')), areasData.map((x) => safeNumber(x.total)));
+    drawChart('mileageChart', 'bar', kilometrajeData.map((x) => safeText(x.placa, 'Sin placa')), kilometrajeData.map((x) => safeNumber(x.kilometros)));
   } catch (error) {
     showAlert(error.message, 'danger');
   }
 }
 
-function renderMetrics(data) {
+function renderMetrics(data = {}) {
   const metrics = [
-    ['Solicitudes de hoy', data.solicitudes_hoy, 'bi-calendar-day', 'bg-primary-app', 'Servicios solicitados para hoy'],
-    ['Pendientes', data.solicitudes_pendientes, 'bi-hourglass-split', 'bg-warning-app', 'Requieren programación'],
-    ['Programadas', data.solicitudes_programadas, 'bi-calendar-check', 'bg-info-app', 'Listas para atención'],
-    ['Especiales', data.pedidos_especiales_atender, 'bi-lightning-charge', 'bg-primary-app', 'Atendibles por disponibilidad'],
-    ['Esp. rechazados', data.pedidos_especiales_rechazados, 'bi-x-circle', 'bg-danger-app', 'Sin vehículo o asientos'],
-    ['Disponibles', data.vehiculos_disponibles, 'bi-check-circle', 'bg-success-app', 'Unidades operativas'],
-    ['En ruta', data.vehiculos_en_ruta, 'bi-geo-alt', 'bg-info-app', 'Atenciones activas'],
-    ['Mantenimiento', data.vehiculos_mantenimiento, 'bi-tools', 'bg-muted-app', 'No asignables'],
-    ['Finalizadas', data.atenciones_finalizadas, 'bi-check2-square', 'bg-success-app', 'Atenciones cerradas'],
-    ['Km recorridos', data.kilometros_recorridos, 'bi-speedometer2', 'bg-danger-app', 'Total acumulado']
+    ['Solicitudes de hoy', safeNumber(data.solicitudes_hoy), 'bi-calendar-day', 'bg-primary-app', 'Servicios solicitados para hoy'],
+    ['Pendientes', safeNumber(data.solicitudes_pendientes), 'bi-hourglass-split', 'bg-warning-app', 'Requieren programación'],
+    ['Programadas', safeNumber(data.solicitudes_programadas), 'bi-calendar-check', 'bg-info-app', 'Listas para atención'],
+    ['Especiales', safeNumber(data.pedidos_especiales_atender), 'bi-lightning-charge', 'bg-primary-app', 'Atendibles por disponibilidad'],
+    ['Especiales rechazados', safeNumber(data.pedidos_especiales_rechazados), 'bi-x-circle', 'bg-danger-app', 'Sin vehículo o asientos'],
+    ['Disponibles', safeNumber(data.vehiculos_disponibles), 'bi-check-circle', 'bg-success-app', 'Unidades operativas'],
+    ['En ruta', safeNumber(data.vehiculos_en_ruta), 'bi-geo-alt', 'bg-info-app', 'Atenciones activas'],
+    ['Mantenimiento', safeNumber(data.vehiculos_mantenimiento), 'bi-tools', 'bg-muted-app', 'No asignables'],
+    ['Finalizadas', safeNumber(data.atenciones_finalizadas), 'bi-check2-square', 'bg-success-app', 'Atenciones cerradas'],
+    ['Km recorridos', safeNumber(data.kilometros_recorridos), 'bi-speedometer2', 'bg-danger-app', 'Total acumulado']
   ];
   document.getElementById('metricGrid').innerHTML = metrics.map(([label, value, icon, color, text]) => `
     <div class="col-sm-6 col-xl-3">
@@ -77,13 +83,13 @@ function renderMetrics(data) {
     </div>`).join('');
 }
 
-function renderSmartAlerts(alerts) {
+function renderSmartAlerts(alerts = []) {
   const host = document.getElementById('smartAlerts');
   if (!alerts.length) {
     host.innerHTML = '<div class="alert alert-success mb-0"><i class="bi bi-check-circle me-2"></i>Operación estable sin alertas críticas.</div>';
     return;
   }
-  host.innerHTML = `<div class="alert alert-warning mb-0"><strong>Alertas inteligentes</strong><ul class="mb-0 mt-2">${alerts.map((x) => `<li>${x}</li>`).join('')}</ul></div>`;
+  host.innerHTML = `<div class="alert alert-warning mb-0"><strong>Alertas inteligentes</strong><ul class="mb-0 mt-2">${alerts.map((x) => `<li>${safeText(x)}</li>`).join('')}</ul></div>`;
 }
 
 function drawChart(id, type, labels, data) {

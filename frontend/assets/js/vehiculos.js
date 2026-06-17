@@ -78,7 +78,7 @@ async function loadVehiculos() {
         <td>${v.observacion || ''}</td>
         <td class="text-end">
           <select class="form-select form-select-sm" onchange="changeVehiculoEstado(${v.id_vehiculo}, this.value)">
-            ${['disponible','mantenimiento','fuera_servicio'].map((e) => `<option value="${e}" ${v.estado === e ? 'selected' : ''}>${e.replaceAll('_',' ')}</option>`).join('')}
+            ${['disponible','mantenimiento','fuera_servicio'].map((e) => `<option value="${e}" ${v.estado === e ? 'selected' : ''}>${stateLabel(e)}</option>`).join('')}
           </select>
         </td>
       </tr>`).join('');

@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </section>
               <section data-section="3" class="d-none">
                 <div class="alert alert-info mb-3">
-                  <i class="bi bi-info-circle me-2"></i>Revise los datos antes de registrar. El backend volverá a validar fecha, hora, área y campos obligatorios.
+                  <i class="bi bi-info-circle me-2"></i>Revise los datos antes de registrar. El sistema volverá a validar fecha, hora, área y campos obligatorios.
                 </div>
               </section>
               <div class="d-flex justify-content-between mt-3">

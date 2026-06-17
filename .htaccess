@@ -1,0 +1,7 @@
+AddDefaultCharset UTF-8
+AddCharset UTF-8 .html .css .js .json .php .md .sql
+
+<IfModule mod_headers.c>
+  Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+  Header set Pragma "no-cache"
+</IfModule>
