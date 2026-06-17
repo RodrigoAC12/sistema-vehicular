@@ -31,6 +31,10 @@ function requireSession() {
 }
 
 async function apiRequest(service, action, options = {}) {
+  if (!window.APP_CONFIG?.apiBase) {
+    throw new Error('No se encontró la configuración de conexión con el servidor.');
+  }
+
   const query = new URLSearchParams({ service, action, ...(options.query || {}) });
   const requestOptions = {
     method: options.method || 'GET',
@@ -42,7 +46,14 @@ async function apiRequest(service, action, options = {}) {
   if (Object.prototype.hasOwnProperty.call(options, 'body')) {
     requestOptions.body = JSON.stringify(options.body);
   }
-  const response = await fetch(`${window.APP_CONFIG.apiBase}?${query.toString()}`, requestOptions);
+
+  let response;
+  try {
+    response = await fetch(`${window.APP_CONFIG.apiBase}?${query.toString()}`, requestOptions);
+  } catch {
+    throw new Error('No se pudo conectar con el servidor. Verifique que Apache y MySQL estén activos en XAMPP.');
+  }
+
   const json = await response.json().catch(() => ({ success: false, message: 'Respuesta no válida del servidor', data: null }));
   if (response.status === 401) {
     localStorage.removeItem('sv_token');

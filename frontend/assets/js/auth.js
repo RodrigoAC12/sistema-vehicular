@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const button = form.querySelector('button[type="submit"]');
     const message = document.getElementById('loginMessage');
     button.disabled = true;
-      button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Ingresando';
+    button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Ingresando';
     message.innerHTML = '';
 
     try {
