@@ -89,8 +89,16 @@ function retorno_register(): void
         ]);
         $idRetorno = (int)$db->lastInsertId();
 
-        $db->prepare("UPDATE programaciones SET estado = 'finalizada' WHERE id_programacion = ?")->execute([(int)$data['id_programacion']]);
-        $db->prepare("UPDATE solicitudes SET estado = 'atendida' WHERE id_solicitud = ?")->execute([(int)$programacion['id_solicitud']]);
+        if (!empty($programacion['codigo_ruta'])) {
+            $db->prepare("UPDATE programaciones SET estado = 'finalizada' WHERE codigo_ruta = ?")->execute([$programacion['codigo_ruta']]);
+            $db->prepare("UPDATE solicitudes s
+                INNER JOIN programaciones p ON p.id_solicitud = s.id_solicitud
+                SET s.estado = 'atendida'
+                WHERE p.codigo_ruta = ?")->execute([$programacion['codigo_ruta']]);
+        } else {
+            $db->prepare("UPDATE programaciones SET estado = 'finalizada' WHERE id_programacion = ?")->execute([(int)$data['id_programacion']]);
+            $db->prepare("UPDATE solicitudes SET estado = 'atendida' WHERE id_solicitud = ?")->execute([(int)$programacion['id_solicitud']]);
+        }
         $db->prepare("UPDATE vehiculos SET estado = 'disponible' WHERE id_vehiculo = ?")->execute([(int)$programacion['id_vehiculo']]);
         add_vehicle_to_queue($db, (int)$programacion['id_vehiculo']);
         log_action($db, (int)$user['id_usuario'], 'retorno', 'registrar', 'Retorno vehicular registrado');

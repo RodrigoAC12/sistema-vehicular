@@ -51,9 +51,28 @@ function valid_service_hour(string $hour): bool
     return $time >= '08:00' && $time <= '16:00';
 }
 
+function current_time_after(string $hour): bool
+{
+    return date('H:i') > substr($hour, 0, 5);
+}
+
 function normalize_time(string $hour): string
 {
     return strlen($hour) === 5 ? "{$hour}:00" : $hour;
+}
+
+function add_minutes_to_time(string $hour, int $minutes): string
+{
+    $base = DateTime::createFromFormat('H:i:s', normalize_time($hour));
+    if (!$base) {
+        $base = DateTime::createFromFormat('H:i', substr($hour, 0, 5));
+    }
+    if (!$base) {
+        return normalize_time($hour);
+    }
+
+    $base->modify("+{$minutes} minutes");
+    return $base->format('H:i:s');
 }
 
 function ensure_area_exists(PDO $db, int $idArea): void

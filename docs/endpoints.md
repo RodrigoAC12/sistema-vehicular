@@ -81,6 +81,8 @@ Parámetros destacados: `id`, `estado`, `fecha`, `id_area`.
 | --- | --- | --- | --- |
 | GET | programacion | listar | administrador, coordinador, conductor |
 | POST | programacion | crear | administrador, coordinador |
+| GET/POST | programacion | optimizar-ruta | administrador, coordinador |
+| POST | programacion | crear-ruta | administrador, coordinador |
 | GET/POST | programacion | sugerir-vehiculo | administrador, coordinador |
 | POST/PUT | programacion | iniciar-ruta | administrador, coordinador, conductor |
 | POST/PUT | programacion | cancelar | administrador, coordinador |

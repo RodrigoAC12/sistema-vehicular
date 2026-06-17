@@ -48,10 +48,10 @@ async function loadKmData() {
     apiRequest('programacion', 'listar'),
     apiRequest('kilometraje', 'listar')
   ]);
-  const programadas = programaciones.data.filter((p) => p.estado === 'programada');
-  document.getElementById('kmInicialProgramacion').innerHTML = toOptions(programadas, 'id_programacion', (p) => `#${p.id_programacion} - ${p.placa} - ${p.destino}`, 'Seleccione programación');
+  const programadas = programaciones.data.filter((p) => p.estado === 'programada' && (!p.codigo_ruta || Number(p.orden_ruta) === 1));
+  document.getElementById('kmInicialProgramacion').innerHTML = toOptions(programadas, 'id_programacion', (p) => `${p.codigo_ruta ? `Ruta ${p.codigo_ruta}` : `#${p.id_programacion}`} - ${p.placa} - ${p.destino}`, 'Seleccione programación');
   kmStarted = historial.data.filter((k) => k.estado === 'iniciado');
-  document.getElementById('kmFinalProgramacion').innerHTML = toOptions(kmStarted, 'id_programacion', (k) => `#${k.id_programacion} - ${k.placa} - inicial ${k.kilometraje_inicial} km`, 'Seleccione programación');
+  document.getElementById('kmFinalProgramacion').innerHTML = toOptions(kmStarted, 'id_programacion', (k) => `${k.codigo_ruta ? `Ruta ${k.codigo_ruta}` : `#${k.id_programacion}`} - ${k.placa} - inicial ${k.kilometraje_inicial} km`, 'Seleccione programación');
   renderKmHistory(historial.data);
   previewKm();
 }

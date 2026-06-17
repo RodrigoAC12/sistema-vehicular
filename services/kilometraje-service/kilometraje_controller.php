@@ -21,7 +21,7 @@ function handle_kilometraje_request(string $action): void
 
 function kilometraje_base_sql(): string
 {
-    return "SELECT k.*, p.fecha_programada, p.hora_programada, p.destino, p.estado AS estado_programacion,
+    return "SELECT k.*, p.fecha_programada, p.hora_programada, p.destino, p.codigo_ruta, p.orden_ruta, p.estado AS estado_programacion,
                    v.placa, v.marca, v.modelo, v.kilometraje_actual,
                    c.id_usuario AS id_usuario_conductor,
                    CONCAT(u.nombres, ' ', u.apellidos) AS conductor
@@ -72,6 +72,9 @@ function kilometraje_start(): void
     }
     if ($user['rol'] === 'conductor' && (int)$programacion['id_usuario_conductor'] !== (int)$user['id_usuario']) {
         json_response(false, 'No puede registrar kilometraje de otra asignación', null, 403);
+    }
+    if (!empty($programacion['codigo_ruta']) && (int)$programacion['orden_ruta'] !== 1) {
+        json_response(false, 'El kilometraje de una ruta agrupada se registra en el primer pedido de la ruta', null, 422);
     }
     if ($kmInicial < (int)$programacion['kilometraje_actual']) {
         json_response(false, 'El kilometraje inicial debe ser mayor o igual al kilometraje actual del vehículo', null, 422);

@@ -8,6 +8,8 @@ Abra `frontend/login.html`, escriba email y password, y presione `Iniciar sesió
 
 Entre a `Solicitudes`, use el asistente de tres pasos, seleccione área, fecha, hora, destino, cantidad de personas y motivo. El sistema validará que la fecha sea desde mañana y que la hora esté entre 08:00 y 16:00.
 
+Las solicitudes ingresadas después de las 4:00 p.m. quedan rechazadas automáticamente con motivo de corte horario.
+
 ## Registrar pedido especial
 
 Entre a `Solicitudes`, seleccione `Pedido especial` en el tipo de solicitud y complete fecha, hora y cantidad de personas. Estos pedidos pueden ser para el mismo día.
@@ -17,6 +19,12 @@ Presione `Evaluar` para revisar disponibilidad. Si hay vehículo en cola con asi
 ## Programar atención
 
 Entre a `Programación`, seleccione una solicitud pendiente, presione `Sugerir vehículo` o elija manualmente vehículo y conductor. Al guardar, la solicitud pasa a programada y el vehículo sale de la cola.
+
+## Crear ruta agrupada
+
+Entre a `Programación` y use el bloque `Ruta agrupada`. Seleccione varios pedidos pendientes de la misma fecha, confirme el origen y presione `Optimizar ruta corta`. El sistema ordenará los destinos con una estimación local de menor tiempo.
+
+Luego elija vehículo y conductor. El sistema validará que el vehículo esté disponible, que tenga asientos suficientes para todos los pedidos y que no exista una asignación en el mismo horario. Al guardar, todos los pedidos seleccionados quedan programados con el mismo código de ruta.
 
 ## Usar cola
 

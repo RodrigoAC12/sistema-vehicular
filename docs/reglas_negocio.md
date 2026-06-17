@@ -8,6 +8,8 @@
 - La cantidad de personas debe ser mayor que 0.
 - Dirección, motivo y área son obligatorios.
 - El área debe existir y estar activa.
+- La solicitud queda registrada con fecha y hora de solicitud.
+- Las solicitudes ingresadas después de las 4:00 p.m. se registran como `rechazada` con motivo de corte horario.
 - Estados: `pendiente`, `programada`, `atendida`, `rechazada`, `cancelada`.
 
 ## Pedidos especiales
@@ -28,6 +30,10 @@
 - El conductor debe estar activo.
 - No se duplica vehículo o conductor en la misma fecha y hora.
 - Al asignar vehículo, la unidad sale de la cola.
+- El coordinador puede agrupar varios pedidos de la misma fecha en una ruta si los asientos del vehículo alcanzan.
+- La ruta corta se calcula desde un origen usando una estimación local entre direcciones y ordena los pedidos por menor tiempo estimado.
+- Una ruta agrupada comparte código de ruta, vehículo, conductor, fecha y hora de inicio.
+- Al iniciar, cancelar o cerrar retorno de una ruta agrupada, el cambio se aplica a todos los pedidos del mismo código de ruta.
 - Estados: `programada`, `en_ruta`, `finalizada`, `cancelada`.
 
 ## Panel público

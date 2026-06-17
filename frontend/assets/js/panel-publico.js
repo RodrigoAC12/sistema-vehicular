@@ -44,11 +44,14 @@ async function loadPublicPanel() {
             <div class="public-time">${formatTime(p.hora_programada)}</div>
             ${stateBadge(p.estado)}
           </div>
-          <h2 class="h5 mt-3 mb-2">${p.destino}</h2>
+          <h2 class="h5 mt-3 mb-2">${p.codigo_ruta ? `Ruta ${p.codigo_ruta}` : p.destino}</h2>
+          ${p.codigo_ruta && p.pedidos?.length > 1 ? `<div class="small mb-2"><strong>Atendiendo:</strong> ${p.pedidos.map((pedido) => `P${pedido.id_solicitud}`).join(' - ')}</div>` : ''}
+          ${p.codigo_ruta && p.pedidos?.length ? `<ul class="small ps-3 mb-2">${p.pedidos.map((pedido) => `<li>${pedido.destino}</li>`).join('')}</ul>` : ''}
           <div class="row g-2 small">
             <div class="col-12"><i class="bi bi-building me-1"></i>${p.area}</div>
             <div class="col-12"><i class="bi bi-person-badge me-1"></i>${p.conductor}</div>
             <div class="col-12"><i class="bi bi-truck me-1"></i>${p.placa} - ${p.marca} ${p.modelo}</div>
+            ${p.duracion_ruta_min > 0 ? `<div class="col-12"><i class="bi bi-signpost-split me-1"></i>${p.duracion_ruta_min} min estimados | ${Number(p.distancia_ruta_km).toFixed(1)} km</div>` : ''}
           </div>
         </article>
       </div>`).join('') : `<div class="col-12">${emptyState('No hay programación publicada para la fecha')}</div>`;

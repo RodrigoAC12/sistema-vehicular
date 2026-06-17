@@ -74,13 +74,20 @@ function solicitudes_create(): void
         json_response(false, 'La cantidad de personas debe ser mayor que 0', null, 422);
     }
 
+    $isAfterRequestCutoff = current_time_after('16:00');
     $estado = 'pendiente';
     $resultadoEspecial = 'no_aplica';
     $motivoRechazo = null;
     $idVehiculoSugerido = null;
     $vehiculoSugerido = null;
 
-    if ($isSpecial) {
+    if ($isAfterRequestCutoff) {
+        $estado = 'rechazada';
+        $motivoRechazo = 'Solicitud registrada después de las 4:00 p.m.';
+        if ($isSpecial) {
+            $resultadoEspecial = 'rechazar';
+        }
+    } elseif ($isSpecial) {
         $vehiculoSugerido = find_available_vehicle_for_capacity($db, $cantidad);
         if ($vehiculoSugerido) {
             $resultadoEspecial = 'atender';
@@ -99,8 +106,8 @@ function solicitudes_create(): void
 
     $stmt = $db->prepare(
         "INSERT INTO solicitudes
-         (id_usuario, id_area, fecha_solicitud, fecha_servicio, hora_servicio, direccion, cantidad_personas, motivo, observaciones, tipo_solicitud, resultado_especial, motivo_rechazo, id_vehiculo_sugerido, estado)
-         VALUES (?, ?, CURDATE(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+         (id_usuario, id_area, fecha_solicitud, hora_solicitud, fecha_servicio, hora_servicio, direccion, cantidad_personas, motivo, observaciones, tipo_solicitud, resultado_especial, motivo_rechazo, id_vehiculo_sugerido, estado)
+         VALUES (?, ?, CURDATE(), CURTIME(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
     $stmt->execute([
         $idUsuario,
@@ -142,6 +149,9 @@ function solicitudes_create(): void
     if ($isSpecial && $resultadoEspecial === 'rechazar') {
         $message = 'Pedido especial registrado como rechazado por falta de disponibilidad';
     }
+    if ($isAfterRequestCutoff) {
+        $message = 'Solicitud registrada como rechazada por ingresar después de las 4:00 p.m.';
+    }
 
     json_response(true, $message, $response, 201);
 }
@@ -164,6 +174,14 @@ function solicitudes_evaluate_special(): void
     $cantidad = (int)$data['cantidad_personas'];
     if ($cantidad <= 0) {
         json_response(false, 'La cantidad de personas debe ser mayor que 0', null, 422);
+    }
+
+    if (current_time_after('16:00')) {
+        json_response(true, 'No se atienden solicitudes registradas después de las 4:00 p.m.', [
+            'disponible' => false,
+            'decision' => 'rechazar',
+            'motivo_rechazo' => 'Solicitud registrada después de las 4:00 p.m.'
+        ]);
     }
 
     $db = Database::connection();

@@ -52,6 +52,9 @@ Servicios incluidos:
 - Validación de fecha mínima desde el día siguiente.
 - Pedidos especiales para el mismo día sujetos a disponibilidad real.
 - Evaluación de asientos y vehículo disponible antes de atender o rechazar un pedido especial.
+- Corte horario: solicitudes ingresadas después de las 4:00 p.m. quedan rechazadas.
+- Rutas agrupadas para atender varios pedidos con un mismo vehículo y conductor.
+- Optimización local de ruta corta por orden estimado entre direcciones.
 - Validación de horario permitido de 08:00 a 16:00.
 - Gestión de vehículos y conductores.
 - Cola vehicular con criterio FIFO.
@@ -94,6 +97,7 @@ Si ya tenía una base importada antes de los pedidos especiales, aplique:
 
 ```text
 database/migrations/2026_06_17_pedidos_especiales.sql
+database/migrations/2026_06_17_rutas_agrupadas.sql
 ```
 
 6. Verifique la conexión en:
@@ -142,8 +146,8 @@ admin123
 3. Si es urgente, registrar un **Pedido especial** para hoy; el sistema evaluará vehículo y asientos disponibles.
 4. Iniciar sesión como coordinador.
 5. Revisar solicitudes pendientes y pedidos especiales atendibles.
-6. Usar la opción **Sugerir vehículo** o asignar uno manualmente.
-7. Asignar conductor y guardar la programación.
+6. Para una atención individual, usar **Sugerir vehículo** o asignar uno manualmente.
+7. Para varios pedidos, seleccionar pedidos en **Ruta agrupada**, optimizar ruta corta y guardar el mismo vehículo/conductor.
 8. Iniciar sesión como conductor.
 9. Registrar kilometraje inicial.
 10. Iniciar ruta.
@@ -157,7 +161,7 @@ admin123
 - **Solicitudes:** registro guiado, pedidos normales y pedidos especiales con evaluación de disponibilidad.
 - **Vehículos:** administración de flota, estados, capacidad y kilometraje.
 - **Conductores:** registro y estado de conductores.
-- **Programación:** asignación de vehículos y conductores.
+- **Programación:** asignación individual, rutas agrupadas y optimización local de ruta corta.
 - **Cola:** vehículos disponibles ordenados por FIFO.
 - **Kilometraje:** registro inicial, final y recorrido.
 - **Retornos:** cierre de atenciones y retorno a disponibilidad.
